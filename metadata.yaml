@@ -1,5 +1,8 @@
 _repo: The-Devil-s-Dictionary_972
-_version: 0.1.0
+_version: 0.2.0
+covers:
+- cover_type: generated
+  image_path: cover.png
 creator:
   author:
     agent_name: Bierce, Ambrose
@@ -15,6 +18,8 @@ description: "The Devil's Dictionary is a satirical dictionary written by Americ
   \ words. Retitled in 1911, it has been followed by numerous \"unabridged\" versions\
   \ compiled after Bierce's death, which include definitions absent from earlier editions.\n\
   \ From Wikipedia (CC BY-SA)."
+edition_identifiers:
+  edition_id: http://www.gutenberg.org/ebooks/972#The-Devil-s-Dictionary
 gutenberg_bookshelf:
 - Reference
 - Humor
