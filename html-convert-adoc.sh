@@ -1,7 +1,7 @@
 #!/bin/bash
 # Simple script to extract and filter Project Gutenberg HTML to Asciidoc format
 # Outputs to STDOUT 
-# Usage: html-convert-adoc.sh [-c] <html_book>
+# Usage: html-convert-adoc.sh [-c] <html_book> > book.asciidoc
 
 # Process script options
 CLEANUP=true
@@ -81,6 +81,7 @@ perl -i -p0e 's/\v{4,}/\n\n\n/gms' $tmpfile
 #perl -i -p0e 's/^[.]{4}(.*?)^[.]{4}(?=\v+^[A-Z]+,\s\p{PosixPrint})/\[quote]\n____\n\1____\n/gms' $tmpfile
 
 # Fix some messed up quotes
+perl -i -p0e 's/_(The Unauthorized Version)_/\1/gms' $tmpfile
 perl -i -p0e 's/^\s+(J\.H\. Bumbleshook)\s+[.]{4}/....\n\n\1/gms' $tmpfile
 perl -i -p0e 's/^[.]{4}\s+(EUCHARIST.*?)^[.]{4}/\1/gms' $tmpfile
 perl -i -p0e 's/^[.]{4}\s+(MORAL.*?expediency\.)\s+(  It is.*?offence\.)\s+(Gooke'\''s Meditations)\s+^[.]{4}/\1\n\n....\n\2\n\n....\n\n\3/gms' $tmpfile
@@ -101,16 +102,24 @@ perl -i -p0e 's/^\{([^}]*?)^\}\v+(\p{PosixPrint}+)\v/\[quote, \2\]\n____\n\1____
 # Boldface word being defined
 perl -i -pe 's/(^[A-Z\-.'\'']*),/\*\*\1\*\*,/g' $tmpfile
 
+# Boldface first letter in chapter description
+perl -i -p0e 's/^(== [IJKWX]\s+?)([IJKWX])\s/\1\*\*\2\*\* /gms' $tmpfile
+
 # Fix one-offs
 perl -i -pe 's/^(IMPOSTOR)\s/\*\*\1\*\*, /g' $tmpfile
-perl -i -pe 's/^((R\.I\.P\.)|(FORMA PAUPERIS.))\s/\*\*\1\*\* /g' $tmpfile
+perl -i -pe 's/^(ABRACADABRA)\./\*\*\1\*\*\./g' $tmpfile
+perl -i -pe 's/^(HABEAS CORPUS)\./\*\*\1\*\* \(Latin\)./g' $tmpfile
+perl -i -pe 's/^(FORMA PAUPERIS)\. \[Latin\]/\*\*\1\*\* \(Latin\)\./g' $tmpfile
+perl -i -pe 's/^(R\.I\.P\.)\s/\*\*\1\*\* /g' $tmpfile
 perl -i -pe 's/^((APRIL FOOL)|(BABE or BABY)|(BERENICE'\''S HAIR)|(COURT FOOL)|(KING'\''S EVIL)|(MONARCHICAL GOVERNMENT)|(WALL STREET)|(TZETZE \(or TSETSE\) FLY)|(TABLE D'\''HOTE)),/\*\*\1\*\*,/g' $tmpfile
 
 # Italicize part of speech (noun, adj, etc..)
 perl -i -pe 's/(\*\*[^*]+\*\*)(, ([\w]+[.])+([\w]+[.])?)\s/\1__\2__ /g' $tmpfile
 
-# Substitute real greek letters
+# Internationalize some spelling
 # see: http://www.alecjacobson.com/weblog/?p=443
+perl -i -pe 's/TABLE D'\''HOTE/TABLE D'\''HÔTE/g' $tmpfile
+perl -i -pe 's/table d'\''hotage/__table d'\''hôtage__/g' $tmpfile
 perl -i -pe 's/_epixoriambikos_/__επιχοριαμβικóς__/g' $tmpfile
 
 # Output tmpfile
